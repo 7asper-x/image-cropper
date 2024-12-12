@@ -1,0 +1,35 @@
+name: Publish Package
+
+on:
+  release:
+    types: [created]
+
+# Specify permissions at workflow level
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8.15.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          registry-url: "https://registry.npmjs.org"
+
+      - run: pnpm install
+      - run: pnpm build
+
+      # Provenance is npm's new security feature
+      - name: Publish to NPM
+        run: pnpm publish --no-git-checks --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
