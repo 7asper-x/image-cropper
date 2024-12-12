@@ -5,11 +5,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
         with:
-          node-version: 18
+          version: 8.15.4 # Specify the pnpm version you're using
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20 # Use a recent Node.js version
           cache: "pnpm"
       - run: pnpm install
       - run: pnpm build
