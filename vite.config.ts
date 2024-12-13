@@ -11,6 +11,11 @@ export default defineConfig({
       include: ["src"],
     }),
   ],
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "./src"),
+    },
+  },
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
@@ -26,7 +31,9 @@ export default defineConfig({
           "react-dom": "ReactDOM",
           "react/jsx-runtime": "jsxRuntime",
         },
+        assetFileNames: "style.css",
       },
     },
+    cssCodeSplit: false,
   },
 });
