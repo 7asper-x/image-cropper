@@ -28,6 +28,6 @@ jobs:
       - run: pnpm build
 
       - name: Publish to NPM
-        run: pnpm publish --no-git-checks --provenance --access public
+        run: pnpm publish --no-git-checks --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Changed from GITHUB_TOKEN to NPM_TOKEN
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
