@@ -7,3 +7,7 @@ npm install react-image-cropper-xsj
 # or
 pnpm add react-image-cropper-xsj
 ```
+
+## Demo
+
+![demo](image.png)
