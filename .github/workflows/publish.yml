@@ -4,7 +4,6 @@ on:
   release:
     types: [created]
 
-# Specify permissions at workflow level
 permissions:
   contents: read
   id-token: write
@@ -28,8 +27,7 @@ jobs:
       - run: pnpm install
       - run: pnpm build
 
-      # Provenance is npm's new security feature
       - name: Publish to NPM
         run: pnpm publish --no-git-checks --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Changed from GITHUB_TOKEN to NPM_TOKEN
