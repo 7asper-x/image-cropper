@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 
 interface ImageCropperProps {
   src: string;
+  outlineSrc?: string;
+  maskSrc?: string;
   onChange?: (croppedImage: string) => void;
   aspectRatio?: number;
 }
@@ -16,6 +18,8 @@ interface FrameCoords {
 
 const ImageCropper: React.FC<ImageCropperProps> = ({
   src,
+  outlineSrc,
+  maskSrc,
   onChange,
   aspectRatio = 1,
 }) => {
@@ -209,8 +213,46 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       canvas.height
     );
 
+    // Apply mask if bgSrc is provided
+    if (maskSrc) {
+      return new Promise<string>((resolve) => {
+        const maskImage = new Image();
+        maskImage.crossOrigin = "anonymous";
+        maskImage.src = maskSrc;
+
+        maskImage.onload = () => {
+          // Apply the mask using 'destination-in' composite operation
+          ctx.globalCompositeOperation = "destination-in";
+          ctx.drawImage(maskImage, 0, 0, canvas.width, canvas.height);
+          ctx.globalCompositeOperation = "source-over";
+
+          // Convert to data URL and resolve
+          resolve(canvas.toDataURL("image/png", 1.0));
+        };
+
+        maskImage.onerror = (err) => {
+          console.error("Failed to load mask image:", err);
+          // Return the unmasked crop in case of error
+          resolve(canvas.toDataURL("image/jpeg", 1.0));
+        };
+      });
+    }
+
+    // Return unmasked crop if no bgSrc
     return canvas.toDataURL("image/jpeg", 1.0);
   };
+
+  // Update the onClick handler
+  <Button
+    onClick={async () => {
+      const croppedImage = await handleCrop();
+      if (croppedImage && onChange) {
+        onChange(croppedImage);
+      }
+    }}
+  >
+    Done
+  </Button>;
 
   return (
     <div className="flex flex-col w-full h-full gap-4 p-4 rounded-lg bg-background">
@@ -220,8 +262,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             {Math.round(frame.sx)} × {Math.round(frame.sy)}
           </span>
           <Button
-            onClick={() => {
-              const croppedImage = handleCrop();
+            onClick={async () => {
+              const croppedImage = await handleCrop();
               if (croppedImage && onChange) {
                 onChange(croppedImage);
               }
@@ -260,7 +302,15 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
                 height: frame.sy,
                 boxShadow: "0 0 0 9999px rgba(255, 255, 255, 0.9)",
               }}
-            />
+            >
+              {outlineSrc && (
+                <img
+                  src={outlineSrc}
+                  alt="Template"
+                  className="object-contain w-full h-full pointer-events-none"
+                />
+              )}
+            </div>
 
             {/* Crop Frame */}
             <div
