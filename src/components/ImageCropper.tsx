@@ -258,13 +258,13 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
                 left: frame.tx,
                 width: frame.sx,
                 height: frame.sy,
-                boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.4)",
+                boxShadow: "0 0 0 9999px rgba(255, 255, 255, 0.9)",
               }}
             />
 
             {/* Crop Frame */}
             <div
-              className="absolute border-2 border-white"
+              className="absolute border-2 border-black"
               style={{
                 top: frame.ty,
                 left: frame.tx,
@@ -278,7 +278,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
               {["tl", "tr", "bl", "br"].map((corner) => (
                 <div
                   key={corner}
-                  className="absolute w-5 h-5 bg-white border-2 rounded-full border-black/25"
+                  className="absolute w-5 h-5 bg-black border-2 rounded-full border-black/25"
                   style={{
                     top: corner.includes("t") ? -8 : "auto",
                     bottom: corner.includes("b") ? -8 : "auto",
@@ -300,7 +300,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
               {["t", "r", "b", "l"].map((edge) => (
                 <div
                   key={edge}
-                  className="absolute bg-white"
+                  className="absolute bg-black"
                   style={{
                     top: edge === "t" ? -1 : edge === "b" ? "auto" : "50%",
                     bottom: edge === "b" ? -1 : "auto",
