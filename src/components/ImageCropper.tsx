@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 
 interface ImageCropperProps {
   src: string;
@@ -22,7 +21,6 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 }) => {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [rotation, setRotation] = useState(0);
   const [frame, setFrame] = useState<FrameCoords>({
     tx: 0,
     ty: 0,
@@ -86,48 +84,6 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       setIsLoaded(true);
     };
   }, [src, aspectRatio]);
-
-  // Handle rotation updates
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
-
-    const img = new Image();
-    img.src = src;
-
-    img.onload = () => {
-      // Clear the canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Calculate new dimensions for rotated image
-      const radians = (rotation * Math.PI) / 180;
-      const sin = Math.abs(Math.sin(radians));
-      const cos = Math.abs(Math.cos(radians));
-
-      // Get original image dimensions
-      const imgWidth = img.width;
-      const imgHeight = img.height;
-
-      // Calculate new canvas dimensions to fit rotated image
-      const newWidth = imgWidth * cos + imgHeight * sin;
-      const newHeight = imgWidth * sin + imgHeight * cos;
-
-      // Set canvas size to new dimensions
-      canvas.width = newWidth;
-      canvas.height = newHeight;
-
-      // Move to center and rotate
-      ctx.translate(newWidth / 2, newHeight / 2);
-      ctx.rotate(radians);
-
-      // Draw image centered
-      ctx.drawImage(img, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
-
-      // Reset transformation
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-    };
-  }, [rotation, src]);
 
   const handleMouseDown = (e: React.MouseEvent, direction?: string) => {
     if (!stageRef.current) return;
@@ -258,21 +214,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 
   return (
     <div className="flex flex-col w-full h-full gap-4 p-4 rounded-lg bg-background">
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          <Button
-            size="icon"
-            onClick={() => setRotation((r) => (r - 90 + 360) % 360)}
-          >
-            ↶
-          </Button>
-          <Button
-            size="icon"
-            onClick={() => setRotation((r) => (r + 90) % 360)}
-          >
-            ↷
-          </Button>
-        </div>
+      <div className="flex items-center justify-end">
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground">
             {Math.round(frame.sx)} × {Math.round(frame.sy)}
@@ -381,17 +323,6 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             </div>
           </div>
         )}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">Rotation {rotation}°</label>
-        <Slider
-          value={[rotation]}
-          onValueChange={([value]) => setRotation(value)}
-          min={0}
-          max={360}
-          step={1}
-        />
       </div>
     </div>
   );
