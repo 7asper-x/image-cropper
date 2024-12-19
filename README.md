@@ -10,4 +10,5 @@ pnpm add react-image-cropper-xsj
 
 ## Demo
 
-![demo](image.png)
+![demo](./src/assets/ed424a0f7aa28819ede6f197a13b95e.png)
+![demo](./src/assets/968a6d73ae4559ae8acfde2d8d78e54.png)
